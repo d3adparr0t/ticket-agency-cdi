@@ -36,7 +36,7 @@ public class TheatreBookerBean implements Serializable {
             fc.addMessage(null, errorMsg);
             return;
         }
-        theatreBox.buyTicket(seat);
+        theatreBox.buyTicket(seat.getId());
         FacesMessage successMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Booked!", "Booking successful");
         fc.addMessage(null, successMsg);
         log.info("Seat booked.");

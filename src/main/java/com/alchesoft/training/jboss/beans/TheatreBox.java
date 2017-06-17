@@ -10,8 +10,11 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -19,9 +22,13 @@ import java.util.stream.IntStream;
 @Singleton
 @Startup
 public class TheatreBox implements Serializable {
+
     private static final Logger log = Logger.getLogger(TheatreBox.class);
 
     private List<Seat> seats;
+
+    @Inject
+    private Event<Seat> seatEvent;
 
     @PostConstruct
     public  void setup() {
@@ -53,7 +60,9 @@ public class TheatreBox implements Serializable {
 
     @Lock(LockType.READ)
     public List<Seat> fetchAllSeats() {
-        return this.seats;
+        return this.seats.stream()
+                .sorted(Comparator.comparing(Seat::getName))
+                .collect(toList());
     }
 
     @Lock(LockType.READ)
@@ -64,7 +73,9 @@ public class TheatreBox implements Serializable {
     }
 
     @Lock(LockType.WRITE)
-    public void buyTicket(Seat seat) {
+    public void buyTicket(int seatId) {
+        Seat seat = findById(seatId);
         seat.setBooked(true);
+        seatEvent.fire(seat);
     }
 }
