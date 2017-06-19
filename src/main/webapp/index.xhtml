@@ -4,38 +4,45 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a4j="http://richfaces.org/a4j"
+        xmlns:rich="http://richfaces.org/rich"
         template="/WEB-INF/templates/default.xhtml">
     <ui:define name="content">
         <h1>Ticket Booker Machine</h1>
-        <h:form id="reg">
-            <h3>Wallet: $ #{theatreBookerBean.wallet}</h3>
-            <h:messages errorClass="error" infoClass="info" globalOnly="true"/>
-            <h:panelGrid columns="1" border="1" styleClass="smoke">
-                <h:dataTable var="_seat" value="#{seats}" rendered="#{not empty seats}" styleClass="simpletablestyle">
-                    <h:column>
-                        <f:facet name="header">Id</f:facet>
-                        #{_seat.id}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Name</f:facet>
-                        #{_seat.name}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Price</f:facet>
-                        #{_seat.price}
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">Booked</f:facet>
-                        #{_seat.booked}
-                    </h:column>
-                    <h:column> <f:facet name="header">Action </f:facet>
-                        <h:commandButton id="book"
-                                         action="#{theatreBookerBean.bookSeat(_seat.id)}"
-                                         disabled="#{_seat.booked}"
-                                         value="#{_seat.booked ? 'Reserved' : 'Book'}" />
-                    </h:column>
-                </h:dataTable>
-            </h:panelGrid>
-        </h:form>
+        <f:view>
+            <h:form>
+                <a4j:poll id="poll" interval="2000"
+                          enabled="#{pollerBean.pollingActive}" render="grid"/>
+                <rich:panel header="TicketBooker Machine" style="width:350px">
+                    <h2>Book your ticket</h2>
+                    <h3>Wallet: $ #{theatreBookerBean.wallet}</h3>
+                    <h:messages errorClass="error" infoClass="info" globalOnly="true"/>
+                    <rich:dataTable id="grid" var="_seat" value="#{seats}" rendered="#{not empty seats}" styleClass="simpletablestyle">
+                        <h:column>
+                            <f:facet name="header">Id</f:facet>
+                            #{_seat.id}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Name</f:facet>
+                            #{_seat.name}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Price</f:facet>
+                            #{_seat.price}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Booked</f:facet>
+                            #{_seat.booked}
+                        </h:column>
+                        <h:column> <f:facet name="header">Action </f:facet>
+                            <h:commandButton id="book"
+                                             action="#{theatreBookerBean.bookSeat(_seat.id)}"
+                                             disabled="#{_seat.booked}"
+                                             value="#{_seat.booked ? 'Reserved' : 'Book'}" />
+                        </h:column>
+                    </rich:dataTable>
+                </rich:panel>
+            </h:form>
+        </f:view>
     </ui:define>
 </ui:composition>
